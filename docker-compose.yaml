@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  grafana:
+    image: evertongava/grafana:9.3.6
+    ports:
+      - "3000:3000"
+    expose:
+      - "3000"
+    configs:
+      - source: grafana-config
+        target: /etc/grafana/defaults.ini
+        uid: "1000"
+        gid: "4"
+        mode: 0400
+    volumes:
+      - grafana-data:/var/data/grafana/
+volumes:
+  grafana-data:
+    driver: local
+configs:
+  grafana-config:
+    file: ./assets/defaults.ini

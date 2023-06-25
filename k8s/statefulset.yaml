@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: prometheus
+  serviceName: "service-prometheus"
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  minReadySeconds: 10 # by default is 0
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: prometheus
+        image: evertongava/prometheus:2.41.0
+        ports:
+        - containerPort: 9090
+          name: prometheus
+        volumeMounts:
+        - name: pvc-prometheus-data
+          mountPath: /var/data/prometheus
+  volumeClaimTemplates:
+  - metadata:
+      name: pvc-prometheus-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 500Mi
